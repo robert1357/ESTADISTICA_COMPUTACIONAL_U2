@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Juego de Líneas Mágicas</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .game-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            background: #f7fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        canvas {
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: crosshair;
+            background: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #38b2ac, #319795);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(56, 178, 172, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #319795, #2c7a7b);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 178, 172, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .clear-btn {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(45deg, #e53e3e, #c53030);
+            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+        }
+
+        .info-panel {
+            background: #edf2f7;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .correlation-info {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .correlation-box {
+            background: #e6fffa;
+            border: 2px solid #38b2ac;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 150px;
+        }
+
+        .correlation-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c7a7b;
+            margin: 0;
+        }
+
+        .correlation-label {
+            color: #4a5568;
+            font-size: 0.9em;
+            margin: 5px 0 0 0;
+        }
+
+        .instructions {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .chart-title {
+            font-size: 1.2em;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            canvas {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 Juego de Líneas Mágicas</h1>
+        <p class="subtitle">¡Descubre cómo los puntos pueden crear líneas mágicas!</p>
+        
+        <div class="instructions">
+            <strong>🎮 Cómo jugar:</strong>
+            <br>1. Haz clic en los gráficos para crear puntos de colores
+            <br>2. Observa cómo aparecen las líneas mágicas que conectan los puntos
+            <br>3. Intenta hacer diferentes patrones y ve cómo cambian las líneas
+            <br>4. ¡Diviértete explorando las conexiones!
+        </div>
+
+        <div class="controls">
+            <button onclick="generateRandomPoints()">🎲 Puntos Aleatorios</button>
+            <button onclick="generatePattern('linear')">📈 Patrón Lineal</button>
+            <button onclick="generatePattern('curve')">🌊 Patrón Curvo</button>
+            <button class="clear-btn" onclick="clearAll()">🧹 Limpiar Todo</button>
+        </div>
+
+        <div class="correlation-info">
+            <div class="correlation-box">
+                <div class="correlation-value" id="correlation">0.00</div>
+                <div class="correlation-label">Conexión Mágica</div>
+            </div>
+            <div class="correlation-box">
+                <div class="correlation-value" id="points-count">0</div>
+                <div class="correlation-label">Puntos Creados</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="chart-container">
+                <div class="chart-title">🔴 Gráfico Rojo (Variable X)</div>
+                <canvas id="canvas1" width="350" height="350"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🔵 Gráfico Azul (Variable Y)</div>
+                <canvas id="canvas2" width="350" height="350"></canvas>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>🧠 ¿Qué está pasando?</h3>
+            <p>Este juego te enseña sobre <strong>regresión canónica</strong> de forma divertida:</p>
+            <ul>
+                <li><strong>Puntos:</strong> Cada clic crea un punto en ambos gráficos</li>
+                <li><strong>Líneas Mágicas:</strong> Son las líneas que mejor representan la conexión entre los puntos</li>
+                <li><strong>Conexión Mágica:</strong> Un número que nos dice qué tan bien están conectados los puntos</li>
+                <li><strong>Colores:</strong> Rojo y azul representan diferentes tipos de información</li>
+            </ul>
+            <p>¡Cuantos más puntos crees en línea, más fuerte será la conexión mágica!</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas1 = document.getElementById('canvas1');
+        const canvas2 = document.getElementById('canvas2');
+        const ctx1 = canvas1.getContext('2d');
+        const ctx2 = canvas2.getContext('2d');
+        
+        let points1 = [];
+        let points2 = [];
+        let isDrawing = false;
+
+        // Configurar los canvas
+        function setupCanvas() {
+            [ctx1, ctx2].forEach(ctx => {
+                ctx.fillStyle = '#f7fafc';
+                ctx.fillRect(0, 0, 350, 350);
+                drawGrid(ctx);
+            });
+        }
+
+        // Dibujar cuadrícula
+        function drawGrid(ctx) {
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            
+            for(let i = 0; i <= 350; i += 35) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, 350);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(350, i);
+                ctx.stroke();
+            }
+        }
+
+        // Función para dibujar puntos
+        function drawPoint(ctx, x, y, color, size = 8) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Agregar un borde blanco
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Función para dibujar línea de regresión
+        function drawRegressionLine(ctx, points, color) {
+            if (points.length < 2) return;
+            
+            const n = points.length;
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            
+            points.forEach(point => {
+                sumX += point.x;
+                sumY += point.y;
+                sumXY += point.x * point.y;
+                sumX2 += point.x * point.x;
+            });
+            
+            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+            
+            if (isFinite(slope) && isFinite(intercept)) {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(0, intercept);
+                ctx.lineTo(350, slope * 350 + intercept);
+                ctx.stroke();
+            }
+        }
+
+        // Calcular correlación
+        function calculateCorrelation() {
+            if (points1.length < 2 || points2.length < 2) return 0;
+            
+            const n = Math.min(points1.length, points2.length);
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+            
+            for (let i = 0; i < n; i++) {
+                const x = points1[i].x;
+                const y = points2[i].y;
+                sumX += x;
+                sumY += y;
+                sumXY += x * y;
+                sumX2 += x * x;
+                sumY2 += y * y;
+            }
+            
+            const correlation = (n * sumXY - sumX * sumY) / 
+                Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+            
+            return isFinite(correlation) ? correlation : 0;
+        }
+
+        // Redibujar todo
+        function redraw() {
+            setupCanvas();
+            
+            // Dibujar puntos
+            points1.forEach(point => drawPoint(ctx1, point.x, point.y, '#e53e3e'));
+            points2.forEach(point => drawPoint(ctx2, point.x, point.y, '#3182ce'));
+            
+            // Dibujar líneas de regresión
+            drawRegressionLine(ctx1, points1, '#c53030');
+            drawRegressionLine(ctx2, points2, '#2c5282');
+            
+            // Actualizar información
+            const correlation = calculateCorrelation();
+            document.getElementById('correlation').textContent = correlation.toFixed(2);
+            document.getElementById('points-count').textContent = Math.min(points1.length, points2.length);
+        }
+
+        // Manejar clics
+        function handleCanvasClick(canvas, points, event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            points.push({x, y});
+            redraw();
+            
+            // Efecto visual
+            setTimeout(() => {
+                const ctx = canvas.getContext('2d');
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, 2 * Math.PI);
+                ctx.stroke();
+            }, 50);
+        }
+
+        // Generar puntos aleatorios
+        function generateRandomPoints() {
+            clearAll();
+            const numPoints = 8 + Math.floor(Math.random() * 7);
+            
+            for (let i = 0; i < numPoints; i++) {
+                const x = 50 + Math.random() * 250;
+                const y = 50 + Math.random() * 250;
+                
+                points1.push({x, y: y + (Math.random() - 0.5) * 100});
+                points2.push({x: x + (Math.random() - 0.5) * 100, y});
+            }
+            
+            redraw();
+        }
+
+        // Generar patrones
+        function generatePattern(type) {
+            clearAll();
+            const numPoints = 10;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const x = 30 + (i / (numPoints - 1)) * 290;
+                let y1, y2;
+                
+                if (type === 'linear') {
+                    y1 = 50 + (i / (numPoints - 1)) * 250 + (Math.random() - 0.5) * 30;
+                    y2 = 50 + (i / (numPoints - 1)) * 250 + (Math.random() - 0.5) * 30;
+                } else if (type === 'curve') {
+                    y1 = 175 + 100 * Math.sin(i / (numPoints - 1) * Math.PI) + (Math.random() - 0.5) * 30;
+                    y2 = 175 + 100 * Math.cos(i / (numPoints - 1) * Math.PI) + (Math.random() - 0.5) * 30;
+                }
+                
+                points1.push({x, y: y1});
+                points2.push({x, y: y2});
+            }
+            
+            redraw();
+        }
+
+        // Limpiar todo
+        function clearAll() {
+            points1 = [];
+            points2 = [];
+            redraw();
+        }
+
+        // Event listeners
+        canvas1.addEventListener('click', (e) => handleCanvasClick(canvas1, points1, e));
+        canvas2.addEventListener('click', (e) => handleCanvasClick(canvas2, points2, e));
+
+        // Inicializar
+        setupCanvas();
+    </script>
+</body>
+</html>
