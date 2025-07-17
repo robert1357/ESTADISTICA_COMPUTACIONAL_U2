@@ -1,0 +1,6 @@
+nombre,edad,ciudad,salario
+Ana,25.0,Madrid,50000.0
+Carlos,30.0,,60000.0
+,35.0,Barcelona,55000.0
+María,,Valencia,52000.0
+Pedro,28.0,Sevilla,
