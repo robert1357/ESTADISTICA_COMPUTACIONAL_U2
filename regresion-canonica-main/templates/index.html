@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Regresión Canónica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Análisis de Regresión Canónica</h1>
+            <p>Herramienta para análisis estadístico multivariante</p>
+            
+    <div class="header-content">
+        <img src="static/image.png" alt="Análisis Canónico" class="header-image">
+        <div class="header-text">
+            <h1>Análisis de Regresión Canónica</h1>
+            <p>Herramienta para análisis estadístico multivariante</p>
+        </div>
+    </div>
+
+        </header>
+
+        <nav class="navigation">
+            <button class="nav-btn active" data-section="info">Información</button>
+            <button class="nav-btn" data-section="data">Cargar Datos</button>
+            <button class="nav-btn" data-section="analysis">Análisis</button>
+            <button class="nav-btn" data-section="results">Resultados</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- Sección de Información -->
+            <section id="info" class="section active">
+                <div class="info-card">
+                    <h2>¿Qué es la Regresión Canónica?</h2>
+                    <p>La regresión canónica es una técnica estadística multivariante que permite estudiar la relación entre dos conjuntos de variables. Es especialmente útil cuando se tienen múltiples variables dependientes e independientes.</p>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h3>¿Para qué sirve?</h3>
+                            <ul>
+                                <li>Analizar relaciones complejas entre grupos de variables</li>
+                                <li>Reducir dimensionalidad preservando información</li>
+                                <li>Identificar patrones de correlación</li>
+                                <li>Predecir múltiples variables dependientes</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="info-item">
+                            <h3>Aplicaciones</h3>
+                            <ul>
+                                <li>Investigación en psicología y educación</li>
+                                <li>Análisis de marketing y comportamiento</li>
+                                <li>Estudios médicos y biológicos</li>
+                                <li>Análisis económico y financiero</li>
+                            </ul>
+                        </div>
+                        <div class="info-item">
+                            <h3>variables</h3>
+                            <ul><li><strong>Variables Cuantitativas:</strong> Edad, ingresos, puntajes</li>
+        <li><strong>Variables Cualitativas Ordinales:</strong> Nivel educativo, satisfacción (1-10)</li>
+        <li><strong>Variables Cualitativas Nominales:</strong> Requieren codificación previa</li></ul>
+                        </div>
+                    </div>
+
+                    <div class="steps-section">
+                        <h3>Pasos del Análisis</h3>
+                        <div class="steps-grid">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Preparación de Datos</h4>
+                                    <p>Cargar y verificar los datos, identificar variables dependientes e independientes</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Configuración</h4>
+                                    <p>Seleccionar variables para cada conjunto y configurar parámetros</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Análisis</h4>
+                                    <p>Ejecutar el análisis canónico y calcular correlaciones</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Interpretación</h4>
+                                    <p>Revisar resultados, correlaciones canónicas y coeficientes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Carga de Datos -->
+            <section id="data" class="section">
+                <div class="data-card">
+                    <h2>Carga de Datos</h2>
+                    
+                    <div class="upload-section">
+                        <div class="upload-area">
+                            <input type="file" id="fileInput" accept=".csv" hidden>
+                            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                                Seleccionar archivo CSV
+                            </button>
+                            <p>O arrastra el archivo aquí</p>
+                        </div>
+                        
+                        <div class="sample-data">
+                            <button class="sample-btn" onclick="loadSampleData()">Usar datos de ejemplo</button>
+                        </div>
+                    </div>
+
+                    <div id="dataPreview" class="data-preview" style="display: none;">
+                        <h3>Vista previa de los datos</h3>
+                        <div class="table-container">
+                            <table id="dataTable">
+                                <thead id="tableHeader"></thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="data-info">
+                            <p id="dataInfo"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Análisis -->
+            <section id="analysis" class="section">
+                <div class="analysis-card">
+                    <h2>Configuración del Análisis</h2>
+                    
+                    <div class="variable-selection">
+                        <div class="variable-group">
+                            <h3>Variables Independientes (X)</h3>
+                            <div id="independentVars" class="variable-list"></div>
+                        </div>
+                        
+                        <div class="variable-group">
+                            <h3>Variables Dependientes (Y)</h3>
+                            <div id="dependentVars" class="variable-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-controls">
+                        <button id="runAnalysis" class="analysis-btn" onclick="runCanonicalAnalysis()">
+                            Ejecutar Análisis Canónico
+                        </button>
+                    </div>
+
+                    <div id="analysisStatus" class="status-message" style="display: none;"></div>
+                </div>
+            </section>
+
+            <!-- Sección de Resultados -->
+            <section id="results" class="section">
+                <div class="results-card">
+                    <h2>Resultados del Análisis</h2>
+                    
+                    <div id="resultsContent" class="results-content">
+                        <p>Ejecuta el análisis para ver los resultados aquí.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    <div class="chatbot-container">
+    <div class="chatbot-header">
+        <h2>💬 Asistente Virtual</h2>
+        <span class="chatbot-toggle" onclick="toggleChatbot()">✕</span>
+    </div>
+    <div class="chatbot-body" id="chatBody">
+        <div class="chat-message bot">
+            ¡Hola! Soy tu asistente para análisis canónico.<br>
+            Carga tus datos y te ayudo a interpretarlos.
+        </div>
+    </div>
+    <div class="chatbot-input-area">
+        <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="handleChatKeyPress(event)">
+        <button onclick="sendChatMessage()" id="chatSendBtn">Enviar</button>
+    </div>
+</div>
+
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
