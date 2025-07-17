@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Intercambios - Estrategia de Caramelos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <header class="text-center py-4">
+                    <h1 class="display-4 fw-bold text-primary">
+                        <i class="fas fa-candy-cane"></i> 
+                        Juego de Intercambios Estratégicos
+                    </h1>
+                    <p class="lead text-muted">Intercambia limones, chocolate y huevos por caramelos</p>
+                </header>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row">
+                    <div class="col-12">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <!-- Inventario -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card inventory-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-box"></i> Tu Inventario
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="inventory-item">
+                            <div class="item-icon limon">
+                                <i class="fas fa-lemon"></i>
+                            </div>
+                            <div class="item-info">
+                                <span class="item-name">Limones</span>
+                                <span class="item-count">{{ state.limones }}</span>
+                                <small class="text-muted">({{ state.limones // 2 }} pares)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-item">
+                            <div class="item-icon chocolate">
+                                <i class="fas fa-cookie-bite"></i>
+                            </div>
+                            <div class="item-info">
+                                <span class="item-name">Chocolate</span>
+                                <span class="item-count">{{ state.chocolate }}</span>
+                                <small class="text-muted">({{ state.chocolate // 2 }} pares)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-item">
+                            <div class="item-icon huevo">
+                                <i class="fas fa-egg"></i>
+                            </div>
+                            <div class="item-info">
+                                <span class="item-name">Huevos</span>
+                                <span class="item-count">{{ state.huevos }}</span>
+                                <small class="text-muted">({{ state.huevos // 2 }} pares)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-item caramelo">
+                            <div class="item-icon">
+                                <i class="fas fa-candy-cane"></i>
+                            </div>
+                            <div class="item-info">
+                                <span class="item-name">Caramelos</span>
+                                <span class="item-count">{{ state.caramelos }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                Total de caramelos obtenidos: {{ state.total_caramelos }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intercambio Principal -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card trade-card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-exchange-alt"></i> Intercambio Principal
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="trade-description">
+                            <p><strong>Entregas:</strong> 3 pares (6 objetos)</p>
+                            <p><strong>Recibes:</strong> 1 caramelo + 2 objetos individuales</p>
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('intercambio_principal') }}">
+                            <div class="mb-3">
+                                <label class="form-label">Elige 2 objetos individuales a recibir:</label>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label">Primer objeto:</label>
+                                    <select name="objeto1" class="form-select" required>
+                                        <option value="">Selecciona...</option>
+                                        <option value="limon">🍋 Limón</option>
+                                        <option value="chocolate">🍫 Chocolate</option>
+                                        <option value="huevo">🥚 Huevo</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label">Segundo objeto:</label>
+                                    <select name="objeto2" class="form-select" required>
+                                        <option value="">Selecciona...</option>
+                                        <option value="limon">🍋 Limón</option>
+                                        <option value="chocolate">🍫 Chocolate</option>
+                                        <option value="huevo">🥚 Huevo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success w-100" 
+                                    {% if (state.limones // 2) + (state.chocolate // 2) + (state.huevos // 2) < 3 %}disabled{% endif %}>
+                                <i class="fas fa-handshake"></i> Realizar Intercambio
+                            </button>
+                        </form>
+                        
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">
+                                Pares disponibles: {{ (state.limones // 2) + (state.chocolate // 2) + (state.huevos // 2) }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intercambio de Caramelo -->
+            <div class="col-lg-4 col-md-12">
+                <div class="card trade-card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-candy-cane"></i> Intercambio de Caramelo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="trade-description">
+                            <p><strong>Entregas:</strong> 1 caramelo</p>
+                            <p><strong>Recibes:</strong> 3 pares (6 objetos)</p>
+                        </div>
+                        
+                        <form method="POST" action="{{ url_for('intercambio_caramelo') }}">
+                            <div class="mb-3">
+                                <label class="form-label">Elige 3 pares a recibir:</label>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label">Pares de Limones:</label>
+                                    <select name="pares_limones" class="form-select">
+                                        <option value="0">0 pares</option>
+                                        <option value="1">1 par</option>
+                                        <option value="2">2 pares</option>
+                                        <option value="3">3 pares</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label">Pares de Chocolate:</label>
+                                    <select name="pares_chocolate" class="form-select">
+                                        <option value="0">0 pares</option>
+                                        <option value="1">1 par</option>
+                                        <option value="2">2 pares</option>
+                                        <option value="3">3 pares</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <label class="form-label">Pares de Huevos:</label>
+                                    <select name="pares_huevos" class="form-select">
+                                        <option value="0">0 pares</option>
+                                        <option value="1">1 par</option>
+                                        <option value="2">2 pares</option>
+                                        <option value="3">3 pares</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-warning w-100" 
+                                    {% if state.caramelos < 1 %}disabled{% endif %}>
+                                <i class="fas fa-magic"></i> Usar Caramelo
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Rules -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle"></i> Reglas del Juego
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-lightbulb"></i> Estrategia Clave:</h6>
+                                <ul>
+                                    <li>Siempre elige 2 objetos iguales para formar un nuevo par</li>
+                                    <li>Usa el caramelo para recuperar los otros 2 pares</li>
+                                    <li>¡Puedes mantener el ciclo indefinidamente!</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-chart-line"></i> Objetivo:</h6>
+                                <ul>
+                                    <li>Maximizar el número de caramelos obtenidos</li>
+                                    <li>Mantener un inventario estable para seguir jugando</li>
+                                    <li>Experimentar con diferentes estrategias</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="row mt-3 mb-4">
+            <div class="col-12 text-center">
+                <a href="{{ url_for('reset_game') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-refresh"></i> Reiniciar Juego
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+:root {
+    --color-limon: #FFD700;
+    --color-chocolate: #8B4513;
+    --color-huevo: #F5F5DC;
+    --color-caramelo: #FF6B6B;
+    --color-primary: #4a90e2;
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    border-bottom: none;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Inventory Styles */
+.inventory-card .card-header {
+    background: linear-gradient(135deg, var(--color-primary), #357abd) !important;
+}
+
+.inventory-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.inventory-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--color-primary);
+    transform: translateX(5px);
+}
+
+.item-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: 15px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.item-icon.limon {
+    background: linear-gradient(135deg, var(--color-limon), #e6c200);
+}
+
+.item-icon.chocolate {
+    background: linear-gradient(135deg, var(--color-chocolate), #654321);
+}
+
+.item-icon.huevo {
+    background: linear-gradient(135deg, var(--color-huevo), #e6e6d3);
+    color: #666;
+}
+
+.item-icon:not(.limon):not(.chocolate):not(.huevo) {
+    background: linear-gradient(135deg, var(--color-caramelo), #ff5252);
+}
+
+.item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.item-count {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+/* Trade Card Styles */
+.trade-card .card-header.bg-success {
+    background: linear-gradient(135deg, var(--color-success), #218838) !important;
+}
+
+.trade-card .card-header.bg-warning {
+    background: linear-gradient(135deg, var(--color-warning), #e0a800) !important;
+}
+
+.trade-description {
+    background: rgba(248, 249, 250, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--color-primary);
+}
+
+.trade-description p {
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+.trade-description strong {
+    color: var(--color-primary);
+}
+
+/* Form Styles */
+.form-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 10px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--color-success), #218838);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-warning), #e0a800);
+    color: #333;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05));
+    color: var(--color-success);
+    border-left: 4px solid var(--color-success);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    color: #dc3545;
+    border-left: 4px solid #dc3545;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .inventory-item {
+        padding: 10px;
+    }
+    
+    .item-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        margin-right: 10px;
+    }
+    
+    .item-count {
+        font-size: 20px;
+    }
+    
+    .trade-description {
+        padding: 10px;
+    }
+}
+
+/* Disabled state */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Special effects for successful trades */
+.trade-success {
+    animation: successGlow 1s ease-in-out;
+}
+
+@keyframes successGlow {
+    0% { box-shadow: 0 0 5px var(--color-success); }
+    50% { box-shadow: 0 0 20px var(--color-success), 0 0 30px var(--color-success); }
+    100% { box-shadow: 0 0 5px var(--color-success); }
+}
